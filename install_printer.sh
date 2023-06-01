@@ -19,7 +19,21 @@ PASSWORD="$2"
 sudo apt update
 sudo apt install -y cups smbclient
 
+# Backup the original smb.conf file
+sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.bak
+
+# Append the necessary configuration to enable SMB1 (NT1)
+sudo tee -a /etc/samba/smb.conf > /dev/null << EOL
+[global]
+client min protocol = NT1
+EOL
+
+# Restart the Samba service
+sudo systemctl restart smbd
+
+echo "SMB1 (NT1) enabled successfully!"
 # Configure CUPS
+
 sudo systemctl start cups.service
 sudo systemctl enable cups.service
 
